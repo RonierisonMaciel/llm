@@ -1,3 +1,7 @@
+import streamlit as st
+from gpt4all import GPT4All
+from config import modelo_path
+import os
 # 🧠 Cache do Modelo
 @st.cache_resource
 def load_model():
