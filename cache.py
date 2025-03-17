@@ -34,3 +34,5 @@ def buscar_resposta_cache(pergunta):
     resultado = cursor.fetchone()
     conn.close()
     return resultado[0] if resultado else None
+
+
