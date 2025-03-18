@@ -1,11 +1,7 @@
 import streamlit as st
-from gpt4all import GPT4All
-from database import generate_response
+from model import generate_response
 
 st.title("🏦 BDI (Banco de Dados Intelligence)")
-
-
-
 
 # 🎛️ Interface no Streamlit
 with st.form("query_form"):
