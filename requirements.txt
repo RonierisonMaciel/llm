@@ -1,6 +1,0 @@
-langchain
-openai
-llama-index
-streamlit 
-gpt4all
-flake8
