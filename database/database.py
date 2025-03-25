@@ -1,5 +1,5 @@
 import sqlite3
-from config import DB_PATH, CACHE_DB_PATH
+from config.config import DB_PATH, CACHE_DB_PATH
 
 
 def query_database(query):

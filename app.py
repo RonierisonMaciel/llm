@@ -1,5 +1,5 @@
 import streamlit as st
-from model import generate_response
+from model.model import generate_response
 
 st.title("🏦 BDI (Banco de Dados Intelligence)")
 
