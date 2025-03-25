@@ -1,6 +1,10 @@
+import os
 import model.model as model
+from gpt4all import GPT4All
+import streamlit as st
 from database.database import query_database, buscar_resposta_cache, salvar_resposta
 from cache.cache import get_database_schema
+from config.config import MODEL_PATH
 
 def generate_response(user_question):
     """Busca no cache ou gera uma nova resposta se necessário."""
@@ -54,6 +58,7 @@ def generate_response(user_question):
 
     try:
         resposta = model.generate(prompt).strip()
+        
 
         # 🔥 Salvar resposta no cache para aprendizado futuro
         salvar_resposta(user_question, resposta)
@@ -61,3 +66,21 @@ def generate_response(user_question):
         return resposta
     except Exception as e:
         return f"❌ Erro ao processar a solicitação: {str(e)}"
+
+
+# 🧠 Cache do Modelo
+@st.cache_resource
+def load_model():
+    """Carrega o modelo GPT4All apenas uma vez."""
+    if not os.path.exists(MODEL_PATH):
+        st.error(f"❌ Modelo não encontrado: {MODEL_PATH}")
+        return None
+    try:
+        return GPT4All(MODEL_PATH)
+    except Exception as e:
+        st.error(f"❌ Erro ao carregar o modelo GPT4All: {str(e)}")
+        return None
+
+model = load_model()
+if model:
+    st.success("✅ Modelo carregado com sucesso!")

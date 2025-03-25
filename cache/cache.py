@@ -1,9 +1,7 @@
-import os
 import sqlite3
 import streamlit as st
-from gpt4all import GPT4All
-from config.config import MODEL_PATH, CACHE_DB_PATH
 from config.config import DB_PATH, CACHE_DB_PATH
+from config.config import CACHE_DB_PATH
 
 # 🧠 Cache da Estrutura do Banco
 @st.cache_resource
@@ -17,7 +15,7 @@ def get_database_schema():
         tables = cursor.fetchall()
 
         if not tables:
-            st.warning("⚠ Nenhuma tabela encontrada no banco de dados.")
+            st.warning("⚠️ Nenhuma tabela encontrada no banco de dados.")
             return {}
 
         schema = {}
@@ -51,20 +49,3 @@ def init_cache_db():
 
     init_cache_db()
 
-
-# 🧠 Cache do Modelo
-@st.cache_resource
-def load_model():
-    """Carrega o modelo GPT4All apenas uma vez."""
-    if not os.path.exists(MODEL_PATH):
-        st.error(f"❌ Modelo não encontrado: {MODEL_PATH}")
-        return None
-    try:
-        return GPT4All(MODEL_PATH)
-    except Exception as e:
-        st.error(f"❌ Erro ao carregar o modelo GPT4All: {str(e)}")
-        return None
-
-model = load_model()
-if model:
-    st.success("✅ Modelo carregado com sucesso!")
