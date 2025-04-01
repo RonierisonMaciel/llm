@@ -1,8 +1,7 @@
 import streamlit as st
-from database import generate_response
+from model.model import generate_response
 
 st.title("🏦 BDI (Banco de Dados Intelligence)")
-
 
 # 🎛️ Interface no Streamlit
 with st.form("query_form"):
