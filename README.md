@@ -120,4 +120,4 @@ A aplicação abrirá no seu navegador com a interface do **BDI - Banco de Dados
 ## **📌 Contribuições**
 Sinta-se à vontade para contribuir! Para sugestões, abra uma **issue** ou envie um **pull request**.  
 
-Se precisar de suporte, entre em contato! 🚀
+Se precisar de suporte, entre em contato! 🚀 
