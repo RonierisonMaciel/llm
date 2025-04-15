@@ -118,7 +118,7 @@ A aplicação abrirá no seu navegador com a interface do **BDI - Banco de Dados
 ---
 
 ## **📌 Contribuições**
-Sinta-se à vontade para contribuir! Para sugestões, abra uma **issue** ou envie um **pull request**. Como deve contribuir?
+Sinta-se à vontade para contribuir! Para sugestões, abra uma **issue** ou envie um **pull request**. Veja como contribuir:
 
 1. **Escolher uma tarefa caso acredite ser pertinente ao projeto**
 2. Criar uma nova issue com o título da tarefa (ex: `Tarefa: Dockerizar o projeto`)
