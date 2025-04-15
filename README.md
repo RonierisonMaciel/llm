@@ -118,6 +118,15 @@ A aplicação abrirá no seu navegador com a interface do **BDI - Banco de Dados
 ---
 
 ## **📌 Contribuições**
-Sinta-se à vontade para contribuir! Para sugestões, abra uma **issue** ou envie um **pull request**.  
+Sinta-se à vontade para contribuir! Para sugestões, abra uma **issue** ou envie um **pull request**. Como deve contribuir?
 
-Se precisar de suporte, entre em contato! 🚀
+1. **Escolher uma tarefa caso acredite ser pertinente ao projeto**
+2. Criar uma nova issue com o título da tarefa (ex: `Tarefa: Dockerizar o projeto`)
+3. Criar uma branch com o nome da tarefa (ex: `feature/docker`)
+4. Fazer commits claros e bem descritos na branch
+5. Ao finalizar, abrir um Pull Request com:
+   - Descrição do que foi feito
+   - Como testar
+   - Prints se necessário
+
+Se precisar de suporte, entre em contato na aba discussões. 🐧
