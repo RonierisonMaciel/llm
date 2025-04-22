@@ -16,7 +16,7 @@ def generate_response(user_question):
         return "❌ Por favor, insira uma pergunta válida."
 
     # 🔍 Verifica se o usuário pediu para listar as tabelas
-    if any(keyword in user_question.strip().lower() for keyword in ["mostrar tabelas", "listar tabelas", "quais tabelas existem", "mostrar as tabelas", "tabelas"]):
+    if any(keyword in user_question.strip().lower() for keyword in ["mostrar tabelas", "listar tabelas", "quais tabelas existem", "mostrar as tabelas", "tabelas", "tabela"]):
         schema = get_database_schema()
         if not schema:
             return "❌ Erro ao buscar a estrutura do banco de dados."
@@ -47,6 +47,8 @@ def generate_response(user_question):
     # 🔍 Consulta otimizada (busca apenas colunas mais relevantes)
     columns = ", ".join(schema[table_to_query][:5])  # Limita a 5 colunas para otimizar
     query = f'SELECT {columns} FROM "{table_to_query}" ORDER BY ROWID DESC LIMIT 5;'
+    # possibilidade de criar uma trigger ou procedure para criar uma tabela de cache com as respostas mais frequentes
+    # Executa a consulta no banco de dados e obtém os resultados. [ideia de Alberto Ramos] =P
     result = query_database(query)
 
     if isinstance(result, str):
