@@ -15,6 +15,13 @@ def generate_response(user_question):
     if not user_question.strip():
         return "❌ Por favor, insira uma pergunta válida."
 
+    # 🔍 Verifica se o usuário pediu para listar as tabelas
+    if any(keyword in user_question.strip().lower() for keyword in ["mostrar tabelas", "listar tabelas", "quais tabelas existem", "mostrar as tabelas", "tabelas"]):
+        schema = get_database_schema()
+        if not schema:
+            return "❌ Erro ao buscar a estrutura do banco de dados."
+        return f"📊 O banco contém as seguintes tabelas:\n" + "\n".join([f"- {table}" for table in schema.keys()])
+
     # 🔥 Primeiro, verifica se a resposta já está no cache
     resposta_cache = buscar_resposta_cache(user_question)
     if resposta_cache:
@@ -25,16 +32,17 @@ def generate_response(user_question):
     if not schema:
         return "❌ Erro ao buscar a estrutura do banco de dados."
 
-    # Identificar a tabela mais relevante
+    # 🔍 Identificar automaticamente a tabela mais relevante com base nos termos da pergunta
     table_to_query = None
-    for table in schema.keys():
-        if table.lower() in user_question.lower():
+    for table, columns in schema.items():
+        # Verifica se o nome da tabela ou alguma coluna está na pergunta
+        if table.lower() in user_question.lower() or any(col.lower() in user_question.lower() for col in columns):
             table_to_query = table
             break
 
-    # Se nenhuma tabela for encontrada, listar as tabelas disponíveis
+    # Se nenhuma tabela for encontrada, retorna uma mensagem genérica
     if not table_to_query:
-        return f"📊 O banco contém as seguintes tabelas:\n" + "\n".join([f"- {table}" for table in schema.keys()])
+        return "❓ Não consegui identificar uma tabela relevante para sua pergunta. Por favor, seja mais específico."
 
     # 🔍 Consulta otimizada (busca apenas colunas mais relevantes)
     columns = ", ".join(schema[table_to_query][:5])  # Limita a 5 colunas para otimizar
@@ -58,7 +66,6 @@ def generate_response(user_question):
 
     try:
         resposta = model.generate(prompt).strip()
-        
 
         # 🔥 Salvar resposta no cache para aprendizado futuro
         salvar_resposta(user_question, resposta)
