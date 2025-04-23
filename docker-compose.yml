@@ -1,13 +1,14 @@
 version: '3.8'
 
 services:
-  bdi:
+  llm-app:
     build: .
-    container_name: bdi_app
     ports:
       - "8501:8501"
-    env_file:
-      - .env
+    environment:
+       - DB_PATH=/data/banco_padrao.db
+       - MODEL_PATH=/models/Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf
     volumes:
-      - .:/app
+      - ./database:/data
+      - ./model:/models
     restart: unless-stopped
