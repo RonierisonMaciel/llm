@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  llm-app:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+       - DB_PATH=/data/banco_padrao.db
+       - MODEL_PATH=/models/Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf
+    volumes:
+      - ./database:/data
+      - ./model:/models
+    restart: unless-stopped
