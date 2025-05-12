@@ -2,7 +2,7 @@ import os
 import model.model as model
 from gpt4all import GPT4All
 import streamlit as st
-from database.database import query_database, buscar_resposta_cache, salvar_resposta
+from core.database import query_database, buscar_resposta_cache, salvar_resposta
 from cache.cache import get_database_schema
 from config.config import MODEL_PATH
 
