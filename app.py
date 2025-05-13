@@ -5,7 +5,7 @@ from ui.layout import apply_custom_styles
 from ui.typing_effect import render_typing_effect
 
 init_history_db()
-st.set_page_config(page_title="HuB-IA", page_icon="🏦", layout="centered")
+st.set_page_config(page_title="HuB-IA ", page_icon="🏦", layout="centered")
 apply_custom_styles()
 
 st.markdown('<h1 aria-label="assistente HuB-IA">O que você quer saber?</h1>', unsafe_allow_html=True)
