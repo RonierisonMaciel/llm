@@ -2,8 +2,8 @@ import streamlit as st
 import time
 from rapidfuzz import process
 
-# --- CONFIGURAÇÃO DE PÁGINA (deve ser o primeiro comando Streamlit) ---
-st.set_page_config(page_title="HuB‑IA", layout="wide")
+# --- CONFIGURAÇÃO DE PÁGINA ---
+st.set_page_config(page_title="HuB‑IA – Assistente Inteligente para Dados Públicos da Fecomércio", layout="wide")
 
 # --- ESTILOS PERSONALIZADOS ---
 st.markdown("""
@@ -15,11 +15,16 @@ st.markdown("""
         .stTextInput > div > input {
             font-size: 20px !important;
         }
-        .big-font {
-            font-size: 36px !important;
+        .main-title {
+            font-size: 40px !important;
             text-align: center;
             font-weight: bold;
             margin-top: 1em;
+        }
+        .sub-title {
+            font-size: 24px !important;
+            text-align: center;
+            margin-top: 0.5em;
         }
         .placeholder-text {
             font-style: italic;
@@ -36,7 +41,10 @@ if "historico" not in st.session_state:
 if "resposta_atual" not in st.session_state:
     st.session_state.resposta_atual = None
 
-# --- FUNÇÕES MOCK / EXEMPLO ---
+if "mostrar_sobre" not in st.session_state:
+    st.session_state.mostrar_sobre = False
+
+# --- FUNÇÕES ---
 def consultar(pergunta):
     sql_gerado = "SELECT SUM(valor) FROM ipca_7060_recife"
     colunas_validas = ["valor", "ano", "localidade", "ipca_7060_recife"]
@@ -78,9 +86,15 @@ def sugerir_perguntas(pergunta):
         ]
     return []
 
-# --- SIDEBAR: HISTÓRICO ---
+# --- SIDEBAR ---
 with st.sidebar:
-    st.title("🕘 Histórico")
+    st.title("Menu")
+    if st.button("ℹ️ Sobre o HuB‑IA"):
+        st.session_state.mostrar_sobre = not st.session_state.mostrar_sobre
+
+    st.markdown("---")
+
+    st.subheader("🕘 Histórico")
     if st.session_state.historico:
         for i, item in enumerate(reversed(st.session_state.historico)):
             if st.button(item['pergunta'], key=f"hist_{i}"):
@@ -89,11 +103,28 @@ with st.sidebar:
         st.session_state.historico.clear()
         st.session_state.resposta_atual = None
 
-# --- LAYOUT CENTRAL ---
-st.markdown('<div class="big-font">O que você quer saber?</div>', unsafe_allow_html=True)
+# --- ÁREA PRINCIPAL ---
+st.markdown('<div class="main-title">HuB‑IA – Assistente Inteligente para Dados Públicos da Fecomércio</div>', unsafe_allow_html=True)
 
+if st.session_state.mostrar_sobre:
+    st.markdown("## Sobre o HuB‑IA")
+    st.markdown("""
+    O **HuB‑IA** é um assistente inteligente que traduz perguntas em linguagem natural em consultas SQL sobre dados econômicos públicos.
+
+    Ele utiliza o **LangChain** e **SQLite**, com dados como:
+
+    - 📈 Índice de Preços ao Consumidor Amplo (IPCA)  
+    - 🛒 Pesquisa Mensal do Comércio (PMC)  
+    - 🏭 Pesquisa Mensal de Serviços (PMS)  
+    - 💳 Transações com cartões  
+
+    Desenvolvido pela **Fecomércio** para democratizar o acesso e a interpretação dos dados econômicos.
+    """)
+    st.stop()
+
+st.markdown('<div class="sub-title">O que você quer saber?</div>', unsafe_allow_html=True)
 pergunta = st.text_input("", placeholder="Qual a inflação acumulada em Recife?", label_visibility="collapsed")
-submit = st.button("🔼")
+submit = st.button("enviar")
 
 # --- PROCESSAMENTO ---
 if submit and pergunta.strip():
