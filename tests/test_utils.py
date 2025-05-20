@@ -47,10 +47,14 @@ def test_strip_sql_markup_without_code_block():
     text = "SELECT * FROM produtos;"
     assert strip_sql_markup(text) == "SELECT * FROM produtos;"
 
+from core import utils
+
 def test_list_tables(test_db, monkeypatch):
     monkeypatch.setattr("core.utils.DB_PATH", test_db)
-    tables = list_tables()
+    utils.list_tables.cache_clear()  # limpa o cache
+    tables = utils.list_tables()
     assert "produtos" in tables
+
 
 def test_describe_table(test_db, monkeypatch):
     monkeypatch.setattr("core.utils.DB_PATH", test_db)
