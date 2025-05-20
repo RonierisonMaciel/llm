@@ -8,11 +8,10 @@ from langchain_ollama import OllamaLLM
 from core.prompts import make_system_prompt, make_system_prompt_all, INTERPRET_SYSTEM_PROMPT
 from core.utils import strip_sql_markup
 from core.history import get_history, add_to_history
+from core.model_loader import load_ollama_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-_LLM = OllamaLLM(model="phi4-mini")
 
 def normalize_question(q: str) -> str:
     replacements = {
@@ -54,16 +53,18 @@ def enrich_question(q: str) -> str:
     return enriched
 
 @lru_cache(maxsize=64)
-def generate_sql(question: str, table: str) -> str:
+def generate_sql(question: str, table: str, model_name: str = None) -> str:
+    llm = load_ollama_model(model_name)
     messages = [
         {"role": "system", "content": make_system_prompt(table)},
         {"role": "user", "content": question},
     ]
-    raw = _LLM.invoke(messages)
+    raw = llm.invoke(messages)
     return strip_sql_markup(raw)
 
 @lru_cache(maxsize=64)
-def interpret(sql: str, db_result: Any) -> str:
+def interpret(sql: str, db_result: Any, model_name: str = None) -> str:
+    llm = load_ollama_model(model_name)
     resumo_prompt = (
         f"Resultado da consulta SQL: {db_result}\nQuery executada: {sql}\n\n"
         "Explique o resultado de forma clara e formal, sem redundância."
@@ -72,18 +73,21 @@ def interpret(sql: str, db_result: Any) -> str:
         {"role": "system", "content": INTERPRET_SYSTEM_PROMPT},
         {"role": "user", "content": resumo_prompt},
     ]
-    return _LLM.invoke(messages)
+    return llm.invoke(messages)
 
 @lru_cache(maxsize=64)
-def generate_sql_global(question: str) -> str:
+def generate_sql_global(question: str, model_name: str = None) -> str:
+    llm = load_ollama_model(model_name)
     messages = [
         {"role": "system", "content": make_system_prompt_all()},
         {"role": "user", "content": question},
     ]
-    raw = _LLM.invoke(messages)
+    raw = llm.invoke(messages)
     return strip_sql_markup(raw)
 
-def generate_sql_with_memory(question: str) -> str:
+def generate_sql_with_memory(question: str, model_name: str = None) -> str:
+    llm = load_ollama_model(model_name)
+
     cleaned = normalize_question(question)
     enriched = enrich_question(cleaned)
 
@@ -91,7 +95,7 @@ def generate_sql_with_memory(question: str) -> str:
     messages += get_history(limit=10)
     messages.append({"role": "user", "content": enriched})
 
-    raw = _LLM.invoke(messages)
+    raw = llm.invoke(messages)
     sql = strip_sql_markup(raw)
 
     logger.info(f"[Pergunta] {question}")

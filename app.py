@@ -3,6 +3,9 @@ from core.engine import auto_generate_and_run_query
 from core.history import init_history_db
 from ui.layout import apply_custom_styles
 from ui.typing_effect import render_typing_effect
+from dotenv import load_dotenv
+
+load_dotenv()
 
 init_history_db()
 st.set_page_config(page_title="HuB-IA", page_icon="🏦", layout="centered")
