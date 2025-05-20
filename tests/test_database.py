@@ -9,7 +9,6 @@ import os
 # Adicionar o diretório raiz ao sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 def test_get_db_singleton():
     with patch('core.database.SQLDatabase.from_uri') as mock_from_uri:
         mock_instance = MagicMock()

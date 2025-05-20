@@ -1,5 +1,7 @@
 import sys
 from unittest.mock import MagicMock
+import pytest
+from unittest.mock import patch, MagicMock
 sys.modules['langchain_ollama'] = MagicMock() 
 #usado para rodar localmente
 
@@ -9,9 +11,6 @@ import os
 # Adicionar o diretório raiz ao sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
-import pytest
-from unittest.mock import patch, MagicMock
 from core.llm_agent import (
     normalize_question,
     get_last_valid_sql,
