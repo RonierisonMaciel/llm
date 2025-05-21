@@ -1,6 +1,13 @@
 import streamlit as st
 import time
 from rapidfuzz import process
+from core.engine import auto_generate_and_run_query
+
+# Adicione este import para capturar erros específicos do Ollama
+try:
+    from ollama._client import ResponseError
+except ImportError:
+    ResponseError = Exception  # fallback para ambientes sem Ollama
 
 # --- CONFIGURAÇÃO DE PÁGINA ---
 st.set_page_config(page_title="HuB‑IA – Assistente Inteligente para Dados Públicos da Fecomércio", layout="wide")
@@ -46,16 +53,8 @@ if "mostrar_sobre" not in st.session_state:
 
 # --- FUNÇÕES ---
 def consultar(pergunta):
-    sql_gerado = "SELECT SUM(valor) FROM ipca_7060_recife"
-    colunas_validas = ["valor", "ano", "localidade", "ipca_7060_recife"]
-    col_corrigida = corrigir_coluna("valorr", colunas_validas)
-
-    resposta = (
-        f"O resultado da consulta SQL fornecido é uma única tupla contendo um único valor: (1037.18). "
-        f"Esta linha indica que a soma dos valores no conjunto de dados 'ipca_7060_recife' armazena para o indicador IPCA de Recife é 1037.18. "
-        f"Esse número, tipicamente, seria usado como uma medida financeira ou econômica específica relacionada à cidade do Recife em Brasil."
-    )
-    return resposta, sql_gerado
+    resultado = auto_generate_and_run_query(pergunta.strip())
+    return resultado["interpretacao"], resultado["sql"]
 
 def corrigir_coluna(coluna_gerada, colunas_validas):
     match, score, _ = process.extractOne(coluna_gerada, colunas_validas)
@@ -128,18 +127,26 @@ submit = st.button("enviar")
 
 # --- PROCESSAMENTO ---
 if submit and pergunta.strip():
-    resposta, sql = consultar(pergunta)
+    try:
+        resposta, sql = consultar(pergunta)
 
-    if not is_read_only_query(sql):
-        st.error("⚠️ Apenas comandos de leitura (SELECT) são permitidos.")
-    else:
-        registro = {
-            "pergunta": pergunta,
-            "resposta": resposta,
-            "sql": sql
-        }
-        st.session_state.historico.append(registro)
-        st.session_state.resposta_atual = registro
+        if not is_read_only_query(sql):
+            st.error("⚠️ Apenas comandos de leitura (SELECT) são permitidos.")
+        else:
+            registro = {
+                "pergunta": pergunta,
+                "resposta": resposta,
+                "sql": sql
+            }
+            st.session_state.historico.append(registro)
+            st.session_state.resposta_atual = registro
+
+    except ResponseError as e:
+        st.error("❌ Erro ao se comunicar com o modelo LLM.")
+        st.code(f"Status: {e.status_code}\nMensagem: {e.args[0]}")
+    except Exception as e:
+        st.error("❌ Ocorreu um erro inesperado.")
+        st.code(str(e))
 
 # --- EXIBIÇÃO DA RESPOSTA ---
 if st.session_state.resposta_atual:
